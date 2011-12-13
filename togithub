@@ -1,7 +1,6 @@
 #!/bin/bash
 
-git add *
-echo "Commit description: "
-read desc
-git commit -m desc
+git add .
+read -p "Commit description: " desc
+git commit -m "$desc"
 git push origin master
