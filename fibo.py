@@ -1,5 +1,10 @@
 l = [1, 1]
-while len(str(l[-1])) < 1000:
+total = 0
+while l[-1] < 4000000:
     l.append(l[-1] + l[-2])
-print len(l)
+l.pop();
 
+for n in l:
+    if not n%2:
+        total += n
+print total, l[-1]
