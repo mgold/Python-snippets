@@ -1,4 +1,0 @@
-#!/bin/bash
-
-clear
-time python -u main.py #unbuffered output

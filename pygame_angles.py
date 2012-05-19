@@ -4,16 +4,11 @@ A demonstration by Max Goldstein, Tufts University '14
 
 In pygame, +y is down. Python's arctangent functions expect +y to be up.
 This wreaks havoc with the unit circle if you want to find the angle between
-two points (for, say, collision detection or aiming a gun).
+two points (for, say, collision detection or aiming a gun).  You can avoid the
+problem entirely by calling atan2(-y, x) and adding 2*pi to the result if it's
+negative.
 
 Note that math.atan2(numerator, denominator) does the division for you.
-
-This applet demonstrates the confusing result. The range of the arctangent
-(-pi, pi], which is mathematically accurate but hard to work with. Much worse
-is that the  direction of increasing angular measure is reversed!
-
-You can avoid the problem entirely by calling atan2(-y, x) and adding 2*pi to
-the result if it's negative.
 
 Controls: move the mouse near the axes.
 
@@ -22,7 +17,6 @@ Controls: move the mouse near the axes.
 import pygame, sys, os
 from pygame.locals import *
 from math import atan2, degrees, pi
-halfpi = pi/2.0
 
 def quit():
     pygame.quit()
@@ -67,35 +61,36 @@ while True:
             if 0 < event.pos[0] < 400 and 0 < event.pos[1] < 400:
                 pos = event.pos
 
-    x = pos[0] - origin[0]
-    y = pos[1] - origin[1]
-    theta = atan2(y,x)
+    #Angle logic
+    dx = pos[0] - origin[0]
+    dy = pos[1] - origin[1]
+    rads = atan2(-dy,dx)
+    rads %= 2*pi
+    degs = degrees(rads)
 
     screen.fill(white)
 
+    #Draw coordinate axes and labels
     pygame.draw.circle(screen, black, origin, 5)
     pygame.draw.line(screen, black, (0, 440), (440, 440), 3)
     pygame.draw.line(screen, black, (200, 15), (200, 380))
-    screen.blit(font.render("-pi/2", True, black), (180,10))
-    screen.blit(font.render( "pi/2", True, black), (187, 380))
-    pygame.draw.line(screen, black, (10, 200), (355, 200))
-    screen.blit(font.render("-pi", True, black), (5,  180))
-    screen.blit(font.render( "pi", True, black), (12, 200))
+    screen.blit(font.render( "pi/2", True, black), (178, 10))
+    screen.blit(font.render("3pi/2", True, black), (175, 380))
+    pygame.draw.line(screen, black, (28, 200), (355, 200))
+    screen.blit(font.render("pi", True, black), (8,  190))
     screen.blit(font.render("0", True, black), (360, 190))
 
+    #Draw lines to cursor
     pygame.draw.line(screen, blue, origin, (pos[0], origin[1]), 2)
     pygame.draw.line(screen, red, (pos[0], origin[1]), (pos[0], pos[1]), 2)
     pygame.draw.line(screen, purple, origin, pos, 2)
-    if theta < 0:
-        pygame.draw.arc(screen, green, arcRect, 0, -theta, 4)
-    else:
-        pygame.draw.arc(screen, green, arcRect, -theta, 0, 4)
+    pygame.draw.arc(screen, green, arcRect, 0, rads, 4)
+    #Note that the function expects angles in radians
 
-    screen.blit(font.render(str(x)+" x", True, blue), (10, 450))
-    screen.blit(font.render(str(y)+" y", True, red), (100, 450))
-    screen.blit(font.render(str((x**2 + y**2)**.5)+" d", True, purple), (10, 480))
-    screen.blit(font.render("arctangent(y/x) =", True, black), (10, 510))
-    screen.blit(font.render(str(degrees(theta))+" deg", True, green), (30, 540))
-    screen.blit(font.render(str(theta/pi)+"*pi rad", True, green), (30, 570))
+    #Draw numeric readings
+    screen.blit(font.render(str(dx)+" x", True, blue), (10, 450))
+    screen.blit(font.render(str(dy)+" y", True, red), (100, 450))
+    screen.blit(font.render(str((dx**2 + dy**2)**.5)+" d", True, purple), (10, 480))
+    screen.blit(font.render(str(degs)+" degrees", True, green), (10, 510))
 
     pygame.display.flip() 
