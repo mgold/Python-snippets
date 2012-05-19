@@ -23,7 +23,7 @@ def quit():
     sys.exit()
 
 pygame.init()
-screenDimensions = (400, 600)
+screenDimensions = (400, 540)
 window = pygame.display.set_mode(screenDimensions)
 pygame.display.set_caption('Angles in Pygame')
 screen = pygame.display.get_surface() 
